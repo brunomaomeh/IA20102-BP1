@@ -13,16 +13,20 @@ import static algoritmo.ValorUtilidade.ESQUERDA;
 
 public class Equipe1 extends ProgramaEquipe1 {
 	
-	private static Integer SEM_VISAO_PARA_O_LOCAL = -2;
-	private static Integer FORA_DO_AMBIENTE = -1;
-	private static Integer CELULA_NAO_VISITADA = 0;
-	private static Integer PAREDE = 1;
-	private static List<Integer> EQUIPE1 = new ArrayList<Integer>();
-	private static List<Integer> EQUIPE2 = new ArrayList<Integer>();
-	private static Integer CAIXA = 3;
-	private static Integer CELULA_VISITADA_POR_AGENTE_DA_MESMA_EQUIPE = 5;
-	private static Integer CELULA_VISITADA_POR_AGENTE_DA_EQUIPE_ADVERSARIA = 6;
-	private static Integer CELULA_VISITADA_POR_AGENTE_DE_AMBAS_AS_EQUIPE = 7;
+	private Integer identificador;
+	
+	private static Integer count = 0;
+	
+	private static final Integer SEM_VISAO_PARA_O_LOCAL = -2;
+	private static final Integer FORA_DO_AMBIENTE = -1;
+	private static final Integer CELULA_NAO_VISITADA = 0;
+	private static final Integer PAREDE = 1;
+	private static final List<Integer> EQUIPE1 = new ArrayList<Integer>();
+	private static final List<Integer> EQUIPE2 = new ArrayList<Integer>();
+	private static final Integer CAIXA = 3;
+	private static final Integer CELULA_VISITADA_POR_AGENTE_DA_MESMA_EQUIPE = 5;
+	private static final Integer CELULA_VISITADA_POR_AGENTE_DA_EQUIPE_ADVERSARIA = 6;
+	private static final Integer CELULA_VISITADA_POR_AGENTE_DE_AMBAS_AS_EQUIPE = 7;
 	
 	private Boolean estaPreso = false;
 	
@@ -33,23 +37,29 @@ public class Equipe1 extends ProgramaEquipe1 {
 	private Memoria memoria;
 
 	public Equipe1() {
+		if (count < 9) {
+			identificador = count;
+			count++;
+		} else {
+			count = 0;
+			identificador = count;
+			count++;
+		}
 		memoria = new Memoria();
 	}
 	
 	public void setVisao(int[] visao) {
 		this.visao = visao;
 	}
-	
+
 	public int acao() {
-		this.carregaSensores();
-		Integer movimento = 0;
-		try {
-			movimento = getMovimento();
-		} catch (MapaSemNenhumaVisaoException e) {
-			movimento = (int) (1+Math.random() * (4));
-		}
-		memoria.memoriza(posicao);
-		return movimento;
+//		if (identificador == 0) {
+			this.carregaSensores();
+			Integer movimento = getMovimento();
+			memoria.memoriza(posicao);
+			return movimento;
+//		}
+//		return 0;
 	}
 
 	void carregaSensores() {
@@ -71,31 +81,32 @@ public class Equipe1 extends ProgramaEquipe1 {
 		} else if (this.temEsquerdaComoMaiorValorUtilidade(mapaUtilidade)) {
 			return ESQUERDA.getMovimento();
 		}
-		return 0;
+		
+		return (int) (1+Math.random() * (4));
 	}
 
 	Boolean temBaixoComoMaiorValorUtilidade(Map<ValorUtilidade, Integer> valorUtilidade) {
-		return valorUtilidade.get(BAIXO) >= valorUtilidade.get(CIMA) 
-			&& valorUtilidade.get(BAIXO) >= valorUtilidade.get(DIREITA)
-			&& valorUtilidade.get(BAIXO) >= valorUtilidade.get(ESQUERDA);
+		return valorUtilidade.get(BAIXO) > valorUtilidade.get(CIMA) 
+			&& valorUtilidade.get(BAIXO) > valorUtilidade.get(DIREITA)
+			&& valorUtilidade.get(BAIXO) > valorUtilidade.get(ESQUERDA);
 	}
 
 	Boolean temCimaComoMaiorValorUtilidade(Map<ValorUtilidade, Integer> valorUtilidade) {
-		return valorUtilidade.get(CIMA) >= valorUtilidade.get(BAIXO) 
-			&& valorUtilidade.get(CIMA) >= valorUtilidade.get(DIREITA)
-			&& valorUtilidade.get(CIMA) >= valorUtilidade.get(ESQUERDA);
+		return valorUtilidade.get(CIMA) > valorUtilidade.get(BAIXO) 
+			&& valorUtilidade.get(CIMA) > valorUtilidade.get(DIREITA)
+			&& valorUtilidade.get(CIMA) > valorUtilidade.get(ESQUERDA);
 	}
 
 	Boolean temDireitaComoMaiorValorUtilidade(Map<ValorUtilidade, Integer> valorUtilidade) {
-		return valorUtilidade.get(DIREITA) >= valorUtilidade.get(BAIXO) 
-			&& valorUtilidade.get(DIREITA) >= valorUtilidade.get(CIMA)
-			&& valorUtilidade.get(DIREITA) >= valorUtilidade.get(ESQUERDA);
+		return valorUtilidade.get(DIREITA) > valorUtilidade.get(BAIXO) 
+			&& valorUtilidade.get(DIREITA) > valorUtilidade.get(CIMA)
+			&& valorUtilidade.get(DIREITA) > valorUtilidade.get(ESQUERDA);
 	}
 	
 	Boolean temEsquerdaComoMaiorValorUtilidade(Map<ValorUtilidade, Integer> valorUtilidade) {
-		return valorUtilidade.get(ESQUERDA) >= valorUtilidade.get(BAIXO) 
-			&& valorUtilidade.get(ESQUERDA) >= valorUtilidade.get(CIMA)
-			&& valorUtilidade.get(ESQUERDA) >= valorUtilidade.get(DIREITA);
+		return valorUtilidade.get(ESQUERDA) > valorUtilidade.get(BAIXO) 
+			&& valorUtilidade.get(ESQUERDA) > valorUtilidade.get(CIMA)
+			&& valorUtilidade.get(ESQUERDA) > valorUtilidade.get(DIREITA);
 	}
 	
 	Map<ValorUtilidade, Integer> getMapaValorUtilidade() {
@@ -123,10 +134,6 @@ public class Equipe1 extends ProgramaEquipe1 {
 			mapa.put(ESQUERDA, this.getValorUnidadeEsquerda());
 		} catch (MapaSemNenhumaVisaoException e) {
 			mapa.put(ESQUERDA, -1000);
-		}
-		
-		if (mapa.get(CIMA) == mapa.get(BAIXO) && mapa.get(CIMA) == mapa.get(DIREITA) && mapa.get(CIMA) == mapa.get(DIREITA)) {
-			throw new MapaSemNenhumaVisaoException();
 		}
 		
 		return mapa;

@@ -5,7 +5,7 @@ public class MapaSemNenhumaVisaoException extends RuntimeException {
 	private static final long serialVersionUID = -4744426787005988267L;
 
 	public MapaSemNenhumaVisaoException() {
-		super("celula j‡ visitada");
+		super("mapa sem nenhuma vis‹o");
 	}
 
 	public MapaSemNenhumaVisaoException(String message, Throwable cause) {
