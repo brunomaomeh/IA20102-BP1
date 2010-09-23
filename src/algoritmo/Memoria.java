@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Memoria {
-	private static final int NUMERO_MAXIMO_DA_MEMORIA = 6;
+	private static final int NUMERO_MAXIMO_DA_MEMORIA = 3;
 	private List<Point> memoria;
 	
 	public Memoria() {

@@ -28,7 +28,7 @@ public class Equipe1 extends ProgramaEquipe1 {
 	private static final Integer CELULA_VISITADA_POR_AGENTE_DA_EQUIPE_ADVERSARIA = 6;
 	private static final Integer CELULA_VISITADA_POR_AGENTE_DE_AMBAS_AS_EQUIPE = 7;
 	
-	private Boolean estaPreso = false;
+	private Boolean estahPreso = false;
 	
 	private int[] olfatoEquipe;
 	private int[] olfatoOponente;
@@ -71,7 +71,7 @@ public class Equipe1 extends ProgramaEquipe1 {
 
 	public Integer getMovimento() {
 		Map<ValorUtilidade, Integer> mapaUtilidade = getMapaValorUtilidade();
-		
+
 		if (this.temCimaComoMaiorValorUtilidade(mapaUtilidade)) {
 			return CIMA.getMovimento();
 		} else if (this.temBaixoComoMaiorValorUtilidade(mapaUtilidade)) {
@@ -112,29 +112,10 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Map<ValorUtilidade, Integer> getMapaValorUtilidade() {
 		Map<ValorUtilidade, Integer> mapa = new HashMap<ValorUtilidade, Integer>();
 		
-		try {
-			mapa.put(CIMA, this.getValorUnidadeCima());
-		} catch (MapaSemNenhumaVisaoException e) {
-			mapa.put(CIMA, -1000);
-		}
-		
-		try {
-			mapa.put(BAIXO, this.getValorUnidadeBaixo());
-		} catch (MapaSemNenhumaVisaoException e) {
-			mapa.put(BAIXO, -1000);
-		}
-		
-		try {
-			mapa.put(DIREITA, this.getValorUnidadeDireita());
-		} catch (MapaSemNenhumaVisaoException e) {
-			mapa.put(DIREITA, -1000);
-		}
-		
-		try {
-			mapa.put(ESQUERDA, this.getValorUnidadeEsquerda());
-		} catch (MapaSemNenhumaVisaoException e) {
-			mapa.put(ESQUERDA, -1000);
-		}
+		mapa.put(CIMA, this.getValorUnidadeCima());
+		mapa.put(BAIXO, this.getValorUnidadeBaixo());
+		mapa.put(DIREITA, this.getValorUnidadeDireita());
+		mapa.put(ESQUERDA, this.getValorUnidadeEsquerda());
 		
 		return mapa;
 	}
@@ -142,8 +123,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer getValorUnidadeCima() {
 		Integer valorUnidade = 0;
 		
-		if (this.estaPreso) {
-			
+		if (this.estahPreso) {
+			Integer celula = visao[7];
+			if (celulaIgualParede(celula)) {
+				return -1000;
+			}
 		} else {
 			valorUnidade = valorUnidade+ valorDeVisaoDaCelula0();
 			valorUnidade = valorUnidade + valorDeVisaoDaCelula1();
@@ -161,8 +145,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer getValorUnidadeBaixo() {
 		Integer valorUnidade = 0;
 		
-		if (this.estaPreso) {
-			
+		if (this.estahPreso) {
+			Integer celula = visao[16];
+			if (celulaIgualParede(celula)) {
+				return -1000;
+			}
 		} else {
 			valorUnidade = valorUnidade + valorDeVisaoDaCelula15();
 			valorUnidade = valorUnidade + valorDeVisaoDaCelula16();
@@ -180,8 +167,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer getValorUnidadeDireita() {
 		Integer valorUnidade = 0;
 		
-		if (this.estaPreso) {
-			
+		if (this.estahPreso) {
+			Integer celula = visao[11];
+			if (celulaIgualParede(celula)) {
+				return -1000;
+			}
 		} else {
 			valorUnidade = valorUnidade + valorDeVisaoDaCelula4();
 			valorUnidade = valorUnidade + valorDeVisaoDaCelula8();
@@ -199,8 +189,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer getValorUnidadeEsquerda() {
 		Integer valorUnidade = 0;
 		
-		if (this.estaPreso) {
-			
+		if (this.estahPreso) {
+			Integer celula = visao[12];
+			if (celulaIgualParede(celula)) {
+				return -1000;
+			}
 		} else {
 			valorUnidade = valorUnidade + valorDeVisaoDaCelula0();
 			valorUnidade = valorUnidade + valorDeVisaoDaCelula5();
@@ -218,9 +211,9 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula0() {
 		Integer celula = visao[0];
 		if (memoria.jahVisitou(posicao.getPosicao0())) {
-			return -1;
+			return -3;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 1;
+			return 3;
 		}
 		return 0;
 	}
@@ -228,9 +221,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula1() {
 		Integer celula = visao[1];
 		if (memoria.jahVisitou(posicao.getPosicao1())) {
-			return -3;
+			return -6;
+		} else if (celulaIgualParede(celula)) {
+			return -1;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 3;
+			return 6;
 		}
 		return 0;
 	}
@@ -238,9 +233,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula2() {
 		Integer celula = visao[2];
 		if (memoria.jahVisitou(posicao.getPosicao2())) {
-			return -6;
+			return -9;
+		} else if (celulaIgualParede(celula)) {
+			return -2;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 6;
+			return 9;
 		}
 		return 0;
 	}
@@ -248,9 +245,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula3() {
 		Integer celula = visao[3];
 		if (memoria.jahVisitou(posicao.getPosicao3())) {
-			return -3;
+			return -6;
+		} else if (celulaIgualParede(celula)) {
+			return -1;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 3;
+			return 6;
 		}
 		return 0;
 	}
@@ -258,9 +257,9 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula4() {
 		Integer celula = visao[4];
 		if (memoria.jahVisitou(posicao.getPosicao4())) {
-			return -1;
+			return -3;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 1;
+			return 3;
 		}
 		return 0;
 	}
@@ -268,9 +267,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula5() {
 		Integer celula = visao[5];
 		if (memoria.jahVisitou(posicao.getPosicao5())) {
-			return -3;
+			return -6;
+		} else if (celulaIgualParede(celula)) {
+			return -1;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 3;
+			return 6;
 		}
 		return 0;
 	}
@@ -278,9 +279,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula6() {
 		Integer celula = visao[6];
 		if (memoria.jahVisitou(posicao.getPosicao6())) {
-			return -6;
+			return -9;
+		} else if (celulaIgualParede(celula)) {
+			return -2;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 6;
+			return 9;
 		}
 		return 0;
 	}
@@ -288,9 +291,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula7() {
 		Integer celula = visao[7];
 		if (memoria.jahVisitou(posicao.getPosicao7())) {
-			return -9;
+			return -12;
+		} else if (celulaIgualParede(celula)) {
+			return -12;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 9;
+			return 12;
 		}
 		return 0;
 	}
@@ -298,9 +303,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula8() {
 		Integer celula = visao[8];
 		if (memoria.jahVisitou(posicao.getPosicao8())) {
-			return -6;
+			return -9;
+		} else if (celulaIgualParede(celula)) {
+			return -2;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 6;
+			return 9;
 		}
 		return 0;
 	}
@@ -308,9 +315,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula9() {
 		Integer celula = visao[9];
 		if (memoria.jahVisitou(posicao.getPosicao9())) {
-			return -3;
+			return -6;
+		} else if (celulaIgualParede(celula)) {
+			return -1;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 3;
+			return 6;
 		}
 		return 0;
 	}
@@ -318,9 +327,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula10() {
 		Integer celula = visao[10];
 		if (memoria.jahVisitou(posicao.getPosicao10())) {
-			return -6;
+			return -9;
+		} else if (celulaIgualParede(celula)) {
+			return -2;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 6;
+			return 9;
 		}
 		return 0;
 	}
@@ -328,9 +339,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula11() {
 		Integer celula = visao[11];
 		if (memoria.jahVisitou(posicao.getPosicao11())) {
-			return -9;
+			return -12;
+		} else if (celulaIgualParede(celula)) {
+			return -12;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 9;
+			return 12;
 		}
 		return 0;
 	}
@@ -338,9 +351,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula12() {
 		Integer celula = visao[12];
 		if (memoria.jahVisitou(posicao.getPosicao12())) {
-			return -9;
+			return -12;
+		} else if (celulaIgualParede(celula)) {
+			return -12;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 9;
+			return 12;
 		}
 		return 0;
 	}
@@ -348,9 +363,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula13() {
 		Integer celula = visao[13];
 		if (memoria.jahVisitou(posicao.getPosicao13())) {
-			return -6;
+			return -9;
+		} else if (celulaIgualParede(celula)) {
+			return -2;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 6;
+			return 9;
 		}
 		return 0;
 	}
@@ -358,9 +375,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula14() {
 		Integer celula = visao[14];
 		if (memoria.jahVisitou(posicao.getPosicao14())) {
-			return -3;
+			return -6;
+		} else if (celulaIgualParede(celula)) {
+			return -1;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 3;
+			return 6;
 		}
 		return 0;
 	}
@@ -368,19 +387,27 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula15() {
 		Integer celula = visao[15];
 		if (memoria.jahVisitou(posicao.getPosicao15())) {
-			return -6;
+			return -9;
+		} else if (celulaIgualParede(celula)) {
+			return -2;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 6;
+			return 9;
 		}
 		return 0;
+	}
+
+	private boolean celulaIgualParede(Integer celula) {
+		return celula == PAREDE;
 	}
 	
 	Integer valorDeVisaoDaCelula16() {
 		Integer celula = visao[16];
 		if (memoria.jahVisitou(posicao.getPosicao16())) {
-			return -9;
+			return -12;
+		} else if (celulaIgualParede(celula)) {
+			return -12;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 9;
+			return 12;
 		}
 		return 0;
 	}
@@ -388,9 +415,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula17() {
 		Integer celula = visao[17];
 		if (memoria.jahVisitou(posicao.getPosicao17())) {
-			return -6;
+			return -9;
+		} else if (celulaIgualParede(celula)) {
+			return -2;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 6;
+			return 9;
 		}
 		return 0;
 	}
@@ -398,9 +427,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula18() {
 		Integer celula = visao[18];
 		if (memoria.jahVisitou(posicao.getPosicao18())) {
-			return -3;
+			return -6;
+		} else if (celulaIgualParede(celula)) {
+			return -1;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 3;
+			return 6;
 		}
 		return 0;
 	}
@@ -408,9 +439,9 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula19() {
 		Integer celula = visao[19];
 		if (memoria.jahVisitou(posicao.getPosicao19())) {
-			return -1;
+			return -3;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 1;
+			return 3;
 		}
 		return 0;
 	}
@@ -418,9 +449,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula20() {
 		Integer celula = visao[20];
 		if (memoria.jahVisitou(posicao.getPosicao20())) {
-			return -3;
+			return -6;
+		} else if (celulaIgualParede(celula)) {
+			return -1;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 3;
+			return 6;
 		}
 		return 0;
 	}
@@ -428,9 +461,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula21() {
 		Integer celula = visao[21];
 		if (memoria.jahVisitou(posicao.getPosicao21())) {
-			return -6;
+			return -9;
+		} else if (celulaIgualParede(celula)) {
+			return -2;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 6;
+			return 9;
 		}
 		return 0;
 	}
@@ -438,9 +473,11 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula22() {
 		Integer celula = visao[22];
 		if (memoria.jahVisitou(posicao.getPosicao22())) {
-			return -3;
+			return -6;
+		} else if (celulaIgualParede(celula)) {
+			return -1;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 3;
+			return 6;
 		}
 		return 0;
 	}
@@ -448,9 +485,9 @@ public class Equipe1 extends ProgramaEquipe1 {
 	Integer valorDeVisaoDaCelula23() {
 		Integer celula = visao[23];
 		if (memoria.jahVisitou(posicao.getPosicao23())) {
-			return -1;
+			return -3;
 		} else if (celula == CELULA_NAO_VISITADA) {
-			return 1;
+			return 3;
 		}
 		return 0;
 	}
